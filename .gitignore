@@ -1,0 +1,9 @@
+
+# Ignore thumbnails created by windows
+Thumbs.db
+
+# Unfinished stuff
+/02 - TES3_generate_variety_X/
+
+# Other temporary files
+*.log
