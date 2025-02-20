@@ -23,11 +23,15 @@ def validate_records(nif_name, prefix_id, prefix_mesh, max_length_id, max_length
     return full_id, full_mesh, error_id, error_mesh
 
 # Function to validate user settings
-def validate_settings(s_name, max_length_name):
+def validate_settings(s_name, s_icon, max_length_name, max_length_icon):
     length_name = len(s_name)
+    length_icon = len(s_icon.replace('\\\\', '\\'))
     
     if length_name > max_length_name:
         print(f'\nERROR - defined "s_name" is too long: max {max_length_name} chars, current {length_name} chars')
+        return False
+    if length_icon > max_length_icon:
+        print(f'\nERROR - defined "s_icon" is too long: max {max_length_icon} chars, current {length_icon} chars')
         return False
     return True
 
@@ -35,14 +39,35 @@ def validate_settings(s_name, max_length_name):
 def generate_entry(full_id, full_mesh):
     return textwrap.dedent(f'''\
     {{
-      "type": "Door",
+      "type": "Ingredient",
       "flags": "{s_flags}",
       "id": "{full_id}",
       "name": "{s_name}",
       "script": "{s_script}",
       "mesh": "{full_mesh}",
-      "open_sound": "{s_open_sound}",
-      "close_sound": "{s_close_sound}"
+      "icon": "{s_icon}",
+      "data": {{
+        "weight": {s_weight},
+        "value": {s_value},
+        "effects": [
+          "None",
+          "None",
+          "None",
+          "None"
+        ],
+        "skills": [
+          "None",
+          "None",
+          "None",
+          "None"
+        ],
+        "attributes": [
+          "None",
+          "None",
+          "None",
+          "None"
+        ]
+      }}
     }},''')
 
 # Function to write conversion result to output file
@@ -92,7 +117,7 @@ def process_files():
         
         if not error_id and not error_mesh:
             entries.append(generate_entry(full_id, full_mesh))
-    
+        
     # Check if there is any data to write to output file
     if entries:
         write_output_file(entries, output_file)
@@ -103,31 +128,33 @@ def process_files():
 
 if __name__ == "__main__":
     # Display script information
-    print("\nTES3 Convert to Door Script\nby Siberian Crab\nv1.0.0")
+    print("\nTES3 Convert to Ingredient Script\nby Siberian Crab\nv1.0.0")
     
     # Settings
     s_flags = ""                    # PERSISTENT | BLOCKED
     s_name = ""                     # Defines a name for ALL records (should be <= 31 chars)
     s_script = ""
-    s_open_sound = ""
-    s_close_sound = ""
+    s_icon = ""                     # Defines a path to icon inside 'Icons' folder (should be <= 31 chars) - a\\\\icon.dds
+    s_weight = "0.1"
+    s_value = "10"
     
     prefix_id = "_RR_"              # Defines a unique prefix for record IDs
     prefix_mesh = "rr\\\\f\\\\"     # Defines a path to files inside 'Meshes' folder
     
     max_length_id = 31
-    max_length_name = 31    
+    max_length_name = 31
     max_length_mesh = 31
+    max_length_icon = 31
     
-    output_file = "_TES3_convert_to_door.txt"
-    log_file = "_TES3_convert_to_door_log.txt"
+    output_file = "_TES3_convert_to_miscitem.txt"
+    log_file = "_TES3_convert_to_miscitem_log.txt"
     ignored_files = {os.path.basename(sys.argv[0]), output_file, log_file}
     
     # Validate user settings before processing
-    if not validate_settings(s_name, max_length_name):
+    if not validate_settings(s_name, s_icon, max_length_name, max_length_icon):
         # Wait for user input before exiting
         input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
-        sys.exit(1)    
+        sys.exit(1)
     
     # Process input data to .json structure
     process_files()
