@@ -47,7 +47,7 @@ def validate_settings(config):
     if len(config['s_name']) > config['max_length_name']:
         print(f"\nERROR - defined 's_name' is too long: max {config['max_length_name']} chars, current {len(config['s_name'])} chars")
         return False
-    if len(config['s_icon'].replace('\\\\', '\\')) > config['max_length_icon']:
+    if len(config['s_icon']) > config['max_length_icon']:
         print(f"\nERROR - defined 's_icon' is too long: max {config['max_length_icon']} chars, current {len(config['s_icon'])} chars")
         return False
     return True
