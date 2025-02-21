@@ -2,6 +2,16 @@ import os
 import sys
 import json
 
+# Generates JSON fragments for Static records from NIF files.
+# Output format: comma-separated JSON objects for manual insertion into array.
+# 
+# Usage:
+# 1. Convert your ESP or ESM file to JSON with tes3conv.exe from Greatness7 (https://github.com/Greatness7/tes3conv)
+# 2. Place NIF files in script folder
+# 3. Configure CONFIG section
+# 4. Run script
+# 5. Copy contents of output_file into your JSON
+
 # Configuration settings
 CONFIG = {
     "s_flags": "",                     # PERSISTENT | BLOCKED
@@ -15,14 +25,14 @@ CONFIG = {
     "log_file": "_TES3_convert_to_static_log.txt"
 }
 
-# Function to return a list of .nif files from the current folder
+# Function to return a list of NIF files from the current folder
 def get_nif_files(ignored_files):
     return [
         f for f in os.listdir('.')
         if os.path.isfile(f) and f.lower().endswith(".nif") and f not in ignored_files
     ]
 
-# Function to construct and validate record ID and mesh path
+# Function to construct and validate record ID and Mesh Path
 def validate_length(nif_name, config):
     full_id = f"{config['prefix_id']}{nif_name}"
     full_mesh = f"{config['prefix_mesh']}{nif_name}.nif"
@@ -57,7 +67,7 @@ def write_file(filepath, content, is_json=False):
     except IOError as e:
         print(f"\nERROR - failed to write {filepath}: {e}")
 
-# Function to process .nif files
+# Function to process NIF files
 def process_files(config, ignored_files):
     files = get_nif_files(ignored_files)
     if not files:
