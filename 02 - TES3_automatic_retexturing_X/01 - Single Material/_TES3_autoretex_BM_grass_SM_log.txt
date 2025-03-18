@@ -1,0 +1,4 @@
+ERROR - No .nif.json files found in current folder. Conversion canceled.
+
+The ending of the words is ALMSIVI
+
