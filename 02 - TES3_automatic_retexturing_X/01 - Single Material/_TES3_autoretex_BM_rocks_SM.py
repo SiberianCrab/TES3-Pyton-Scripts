@@ -18,7 +18,7 @@ CONFIG = {
     "base_M1_affix": "_R2",                            	  # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",   # Base texture of the first material
     
-    "log_file": "_TES3_automatic_retexturing_1M_log.txt"
+    "log_file": "_TES3_autoretex_BM_rocks_SM_log.txt"
 }
 
 # List of suffixes/affixes for .NIF name generation
@@ -176,7 +176,7 @@ def main():
     with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
         log.write("")
 
-    print("\nTES3 Automatic Retexturing Script\n         Single Material         \n\nby Siberian Crab\nv1.0.0\n")
+    print("\nTES3 Automatic Retexturing Script\nBloodmoon Rocks | Single Material\n\nby Siberian Crab\nv1.0.0\n")
     
     try:
         process_files(CONFIG)
