@@ -7,13 +7,13 @@ import sys
 # Usage:
 # 1. Convert your NIF files to JSON with Sniff.exe from Zilav (https://www.nexusmods.com/newvegas/mods/67829)
 # 2. Place this script to folder with your .NIF.JSON files 
-# 3. Configure CONFIG section + List of suffixes/affixes for .NIF name generation + List of new textures for the first material
+# 3. Configure CONFIG section (also 'List of suffixes/affixes for .NIF name generation' + 'List of new textures for the first material' for more detailed setup)
 # 4. Run script
 # 5. Convert all .NIF.JSON files back to NIF with Sniff.exe
 
 # Configuration settings
 CONFIG = {
-    "directory": ".",                               	  # Current folder
+    "directory": ".",
     "base_name": "Rock27_BM",                       	  # Base .NIF file name
     "base_M1_affix": "_R2",                            	  # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",   # Base texture of the first material
