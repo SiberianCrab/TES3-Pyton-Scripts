@@ -7,7 +7,7 @@ import json
 # 
 # Usage:
 # 1. Convert your ESP or ESM file to JSON with tes3conv.exe from Greatness7 (https://github.com/Greatness7/tes3conv)
-# 2. Place NIF files in script folder
+# 2. Place this script to folder with your NIF files
 # 3. Configure CONFIG section
 # 4. Run script
 # 5. Copy contents of output_file into your JSON
@@ -108,11 +108,12 @@ def process_files(config, ignored_files):
         print(f"\nWARNING - incorrect records found, see: {config['log_file']}")
 
 def main():
-    print("\nTES3 Convert to Static Script\nby Siberian Crab\nv1.0.1")
+    print("\nTES3 Convert to Static Script\nby Siberian Crab\nv1.0.2")
 
     ignored_files = {os.path.basename(sys.argv[0]), CONFIG["output_file"], CONFIG["log_file"]}
 
     process_files(CONFIG, ignored_files)
+    
     input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
 
 if __name__ == "__main__":
