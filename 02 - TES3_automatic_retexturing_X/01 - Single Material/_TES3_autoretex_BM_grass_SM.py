@@ -25,13 +25,13 @@ CONFIG = {
 # List of suffixes/affixes for .NIF name generation
 suffixes = ["", "_m", "a", "a_m", "b", "b_m"]             # Base .NIF file suffix variations 
 new_M1_affixes = [                                        # New .NIF file affix variations
-    "_D1",												  # for dirt
-    "_DS1",												  # for dirt_snow
-    "_G1", "_G2", "_G3",								  # for grass
-    "_GD1",												  # for grass_dirt
-    "_GS1", "_GS2", "_GS3",								  # for grass_snow
-    "_GSa2",											  # for grass_snow_a
-    "_PN1"												  # for needles
+    "_D1",                                                # for dirt
+    "_DS1",                                               # for dirt_snow
+    "_G1", "_G2", "_G3",                                  # for grass
+    "_GD1",                                               # for grass_dirt
+    "_GS1", "_GS2", "_GS3",                               # for grass_snow
+    "_GSa2",                                              # for grass_snow_a
+    "_PN1"                                                # for needles
 ]
 
 # List of new textures for the first material
