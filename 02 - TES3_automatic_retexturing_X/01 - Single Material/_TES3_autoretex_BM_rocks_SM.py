@@ -15,6 +15,7 @@ import sys
 CONFIG = {
     "directory": ".",
     "base_name": "Rock27_BM",                       	  # Base .NIF file name
+    "base_NTS_name": "Rock",                              # Base NiTriShape name of the first material
     "base_M1_affix": "_R2",                            	  # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",   # Base texture of the first material
     
@@ -57,9 +58,16 @@ def generate_textures():
     )
 
 # Function to log messages to log file and console
-def log_message(message, is_input=False):
-    with open(CONFIG["log_file"], "a", encoding="utf-8") as log:
-        log.write(message + "\n")
+def log_message(message, is_input=False, log_to_file=True):
+    log_file = CONFIG.get("log_file", "")
+
+    if log_to_file and log_file:
+        try:
+            with open(log_file, "a", encoding="utf-8") as log:
+                log.write(message + "\n")
+        except OSError as e:
+            print(f"ERROR - Failed to write to log file: {e}")
+
     if not is_input:
         print(message)
     else:
@@ -82,13 +90,14 @@ def get_json_files(directory):
 # Function to split filename into base_name and _affix
 def get_base_name_and_affix(filename, base_name):
     if filename.startswith(base_name) and filename.endswith(".nif.json"):
-        return base_name, filename[len(base_name):-9]  # Убираем .nif.json
+        return base_name, filename[len(base_name):-len(".nif.json")]
     return None, None
 
 # Function to process files in directory, copy them with new affixes, replace NiTriShape names and textures
 def process_files(config):
     directory = config["directory"]
     base_name = config["base_name"]
+    base_NTS_name = config["base_NTS_name"] 
     base_M1_texture = config["base_M1_texture"]
     
     new_base_M1_texture = generate_textures()
@@ -149,9 +158,13 @@ def process_files(config):
         except (OSError, IOError) as e:
             log_message(f"ERROR - Can't read {filename}: {e}. Skipping file.")
             continue
-        
+
+        if base_NTS_name not in content:
+            log_message(f"WARNING - NiTriShape name {base_NTS_name} not found in {filename}. Skipping file.")
+            continue
+
         if base_M1_texture not in content:
-            log_message(f"WARNING - Texture {base_M1_texture} not found in {filename}. Skipping replacement.")
+            log_message(f"WARNING - Texture {base_M1_texture} not found in {filename}. Skipping file.")
             continue
 
         for i, new_affix in enumerate(M1_affix_mapping[current_affix]):
@@ -159,16 +172,19 @@ def process_files(config):
             new_path = os.path.join(directory, new_filename)
             log_message(f"File created --------> {new_filename}")
 
-            new_content = content.replace(f"{base_name}{current_affix}", f"{base_name}{new_affix}")
-            log_message(f"Renaming NiTriShape -> {base_name}{current_affix} | {base_name}{new_affix}")
+            updated_content = content.replace(f"{base_name}{current_affix}", f"{base_name}{new_affix}")
+
+            new_NTS_name = f"Tri {base_NTS_name}{new_affix}"
+            updated_content = updated_content.replace(base_NTS_name, new_NTS_name)
+            log_message(f"Renaming NiTriShape -> {base_NTS_name} | {new_NTS_name}")
             
             new_texture = new_base_M1_texture[i % len(new_base_M1_texture)]
-            new_content = new_content.replace(base_M1_texture, new_texture)
+            updated_content = updated_content.replace(base_M1_texture, new_texture)
             log_message(f"Replacing texture ---> {base_M1_texture} | {new_texture}")
 
             try:
                 with open(new_path, "w", encoding="utf-8") as f:
-                    f.write(new_content)
+                    f.write(updated_content)
             except (OSError, IOError) as e:
                 log_message(f"ERROR - Can't write {new_filename}: {e}")
 
@@ -176,7 +192,7 @@ def main():
     with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
         log.write("")
 
-    print("\nTES3 Automatic Retexturing Script\nBloodmoon Rocks | Single Material\n\nby Siberian Crab\nv1.0.0\n")
+    print("\nTES3 Automatic Retexturing Script\nBloodmoon Rocks | Single Material\n\nby Siberian Crab\nv1.0.1\n")
     
     try:
         process_files(CONFIG)
