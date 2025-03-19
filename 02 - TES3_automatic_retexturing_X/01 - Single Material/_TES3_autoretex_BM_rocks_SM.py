@@ -14,7 +14,7 @@ import sys
 # Configuration settings
 CONFIG = {
     "directory": ".",
-    "base_name": "Rock27_BM",                       	  # Base .NIF file name
+    "base_name": "Rock01_BM",                       	  # Base .NIF file name
     "base_NTS_name": "Rock",                              # Base NiTriShape name of the first material
     "base_M1_affix": "_R2",                            	  # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",   # Base texture of the first material
@@ -160,11 +160,11 @@ def process_files(config):
             continue
 
         if base_NTS_name not in content:
-            log_message(f"WARNING - NiTriShape name {base_NTS_name} not found in {filename}. Skipping file.")
+            log_message(f"WARNING - NiTriShape name '{base_NTS_name}' not found in {filename}. Skipping file.")
             continue
 
         if base_M1_texture not in content:
-            log_message(f"WARNING - Texture {base_M1_texture} not found in {filename}. Skipping file.")
+            log_message(f"WARNING - Texture '{base_M1_texture}' not found in {filename}. Skipping file.")
             continue
 
         for i, new_affix in enumerate(M1_affix_mapping[current_affix]):
@@ -174,7 +174,7 @@ def process_files(config):
 
             updated_content = content.replace(f"{base_name}{current_affix}", f"{base_name}{new_affix}")
 
-            new_NTS_name = f"Tri {base_NTS_name}{new_affix}"
+            new_NTS_name = f"Tri {base_name}{new_affix}"
             updated_content = updated_content.replace(base_NTS_name, new_NTS_name)
             log_message(f"Renaming NiTriShape -> {base_NTS_name} | {new_NTS_name}")
             
