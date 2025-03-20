@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 # Automatically generates .nif.json files by creating new variants from a base set of files, applying new names and affixes,
 # replacing textures, and renaming NiTriShape nodes according to predefined rules
@@ -14,24 +15,24 @@ import sys
 # Configuration settings
 CONFIG = {
     "directory": ".",
-    "base_name": "Rock01_BM",                       	  # Base .NIF file name
-    "base_NTS_name": "Rock",                              # Base NiTriShape name of the first material
-    "base_M1_affix": "_R2",                            	  # Base .NIF file affix of the first material
-    "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",   # Base texture of the first material
+    "base_name": "Rock01_BM",                            # Base .NIF file name
+    "base_NTS_name": "Rock",                             # Base NiTriShape name of the first material
+    "base_M1_affix": "_R2",                              # Base .NIF file affix of the first material
+    "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",  # Base texture of the first material
     
     "log_file": "_TES3_autoretex_BM_rocks_SM_log.txt"
 }
 
 # List of suffixes/affixes for .NIF name generation
-suffixes = ["", "_m", "a", "a_m", "b", "b_m"]             # Base .NIF file suffix variations 
-new_M1_affixes = [                                        # New .NIF file affix variations
-    "_I1", "_I2", "_I3", "_I4", "_I5", "_I6",             # for ice
-    "_R1", "_R2", "_R3",                                  # for rock
-    "_RS1", "_RS2", "_RS3",                               # for rock_snow
-    "_RSa1", "_RSa2",                                     # for rock_snow_a
-    "_S1", "_S2", "_S3", "_S4", "_S5",                    # for snow
-    "_SI1",                                               # for snow_ice
-    "_SR1"                                                # for snow_rock
+suffixes = ["", "_m", "a", "a_m", "b", "b_m"]            # Base .NIF file suffix variations 
+new_M1_affixes = [                                       # New .NIF file affix variations
+    "_I1", "_I2", "_I3", "_I4", "_I5", "_I6",            # for ice
+    "_R1", "_R2", "_R3",                                 # for rock
+    "_RS1", "_RS2", "_RS3",                              # for rock_snow
+    "_RSa1", "_RSa2",                                    # for rock_snow_a
+    "_S1", "_S2", "_S3", "_S4", "_S5",                   # for snow
+    "_SI1",                                              # for snow_ice
+    "_SR1"                                               # for snow_rock
 ]
 
 # List of new textures for the first material
@@ -93,7 +94,28 @@ def get_base_name_and_affix(filename, base_name):
         return base_name, filename[len(base_name):-len(".nif.json")]
     return None, None
 
-# Function to process files in directory, copy them with new affixes, replace NiTriShape names and textures
+# Function to check if there is a NiTriShape block with the name base_NTS_name
+def has_base_nitrishape(content, base_NTS_name):
+    for key, value in content.items():
+        if "NiTriShape" in key and value.get("Name") == base_NTS_name:
+            return True
+    return False
+
+# Function to check if there is a base_M1_texture in NiSourceTexture
+def has_base_texture(content, base_M1_texture):
+    normalized_base_texture = base_M1_texture.replace("\\\\", "\\")
+    for key, value in content.items():
+        if "NiSourceTexture" in key and isinstance(value, dict):
+            texture_path = value.get("File Name", "")
+            if texture_path == normalized_base_texture:
+                return True
+    return False
+
+# Function to count NiTriShapes inside '0 NiNode'
+def count_nitrishapes(children):
+    return sum(1 for child in children if "NiTriShape" in child)
+
+# Function to process files in directory
 def process_files(config):
     directory = config["directory"]
     base_name = config["base_name"]
@@ -117,15 +139,12 @@ def process_files(config):
 
     for filename in files:
         base, current_affix = get_base_name_and_affix(filename, base_name)
-        
         if not base:
             invalid_base_name_files.append(filename)
             continue
-        
         if current_affix not in M1_affix_mapping:
             invalid_affix_files.append(filename)
             continue
-        
         valid_files.append(filename)
 
     if invalid_base_name_files:
@@ -154,17 +173,28 @@ def process_files(config):
 
         try:
             with open(original_path, "r", encoding="utf-8") as f:
-                content = f.read()
+                content = json.load(f)
         except (OSError, IOError) as e:
             log_message(f"ERROR - Can't read {filename}: {e}. Skipping file.")
             continue
 
-        if base_NTS_name not in content:
+        if not has_base_nitrishape(content, base_NTS_name):
             log_message(f"WARNING - NiTriShape name '{base_NTS_name}' not found in {filename}. Skipping file.")
             continue
 
-        if base_M1_texture not in content:
+        if not has_base_texture(content, base_M1_texture):
             log_message(f"WARNING - Texture '{base_M1_texture}' not found in {filename}. Skipping file.")
+            continue
+
+        # Get the list of children from the 0 NiNode
+        ni_node = content.get("0 NiNode", {})
+        children = ni_node.get("Children", [])
+        
+        # Count the number of NiTriShape blocks
+        nitrishape_count = count_nitrishapes(children)
+        
+        if nitrishape_count == 0:
+            log_message(f"WARNING - No NiTriShape blocks found in {filename}. Skipping file.")
             continue
 
         for i, new_affix in enumerate(M1_affix_mapping[current_affix]):
@@ -172,19 +202,44 @@ def process_files(config):
             new_path = os.path.join(directory, new_filename)
             log_message(f"File created --------> {new_filename}")
 
-            updated_content = content.replace(f"{base_name}{current_affix}", f"{base_name}{new_affix}")
+            # Create a deep copy of the content to avoid modifying the original
+            updated_content = json.loads(json.dumps(content))
 
-            new_NTS_name = f"Tri {base_name}{new_affix}"
-            updated_content = updated_content.replace(base_NTS_name, new_NTS_name)
-            log_message(f"Renaming NiTriShape -> {base_NTS_name} | {new_NTS_name}")
-            
+            # Update the NiNode children and NiTriShape names
+            for j, child in enumerate(updated_content["0 NiNode"]["Children"]):
+                if "NiTriShape" in child:
+                    old_name = child.split('"')[1]
+                    new_name = f"Tri {base_name}{new_affix}:{j + 1}"
+                    updated_content["0 NiNode"]["Children"][j] = child.replace(old_name, new_name)
+                    nitrishape_key = child.split()[0]
+                    if nitrishape_key in updated_content:
+                        updated_content[nitrishape_key]["Name"] = new_name
+                    log_message(f"Renaming NiTriShape -> {old_name} | {new_name}")
+
+            # Update the Name field in NiTriShape blocks
+            nitrishape_counter = 1
+            for key, value in updated_content.items():
+                if "NiTriShape" in key and isinstance(value, dict):
+                    if value.get("Name") == base_NTS_name:
+                        new_name = f"Tri {base_name}{new_affix}:{nitrishape_counter}"
+                        updated_content[key]["Name"] = new_name
+                        log_message(f"Updating NiTriShape Name -> {base_NTS_name} | {new_name}")
+                        nitrishape_counter += 1
+
+            # Replace the base texture
             new_texture = new_base_M1_texture[i % len(new_base_M1_texture)]
-            updated_content = updated_content.replace(base_M1_texture, new_texture)
-            log_message(f"Replacing texture ---> {base_M1_texture} | {new_texture}")
+            normalized_base_texture = base_M1_texture.replace("\\\\", "\\")
+            normalized_new_texture = new_texture.replace("\\\\", "\\")
+
+            for key, value in updated_content.items():
+                if "NiSourceTexture" in key and isinstance(value, dict):
+                    if value.get("File Name") == normalized_base_texture:
+                        updated_content[key]["File Name"] = normalized_new_texture
+                        log_message(f"Replacing texture ---> {normalized_base_texture} | {normalized_new_texture}")
 
             try:
                 with open(new_path, "w", encoding="utf-8") as f:
-                    f.write(updated_content)
+                    json.dump(updated_content, f, indent=4)
             except (OSError, IOError) as e:
                 log_message(f"ERROR - Can't write {new_filename}: {e}")
 
@@ -192,7 +247,7 @@ def main():
     with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
         log.write("")
 
-    print("\nTES3 Automatic Retexturing Script\nBloodmoon Rocks | Single Material\n\nby Siberian Crab\nv1.0.1\n")
+    print("\nTES3 Automatic Retexturing Script\nBloodmoon Rocks | Single Material\n\nby Siberian Crab\nv1.0.2\n")
     
     try:
         process_files(CONFIG)
