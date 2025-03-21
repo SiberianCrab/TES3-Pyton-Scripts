@@ -24,7 +24,8 @@ CONFIG = {
 }
 
 # List of suffixes/affixes for .NIF name generation
-suffixes = ["", "_m", "a", "a_m", "b", "b_m"]             # Base .NIF file suffix variations 
+suffixes = ["", "_m", "a", "a_m", "b", "b_m"]             # Base .NIF file suffix variations
+
 new_M1_affixes = [                                        # New .NIF file affix variations
     "_D1",                                                # for dirt
     "_DS1",                                               # for dirt_snow
@@ -97,16 +98,16 @@ def get_base_name_and_affix(filename, base_name):
 # Function to check if there is a NiTriShape block with the name base_NTS_name
 def has_base_nitrishape(content, base_NTS_name):
     for key, value in content.items():
-        if "NiTriShape" in key and value.get("Name") == base_NTS_name:
+        if "NiTriShape" in key and isinstance(value, dict) and value.get("Name") == base_NTS_name:
             return True
     return False
 
 # Function to check if there is a base_M1_texture in NiSourceTexture
 def has_base_texture(content, base_M1_texture):
-    normalized_base_texture = base_M1_texture.replace("\\\\", "\\")
+    normalized_base_texture = os.path.normpath(base_M1_texture)
     for key, value in content.items():
         if "NiSourceTexture" in key and isinstance(value, dict):
-            texture_path = value.get("File Name", "")
+            texture_path = os.path.normpath(value.get("File Name", ""))
             if texture_path == normalized_base_texture:
                 return True
     return False
@@ -130,7 +131,7 @@ def process_files(config):
         log_message("ERROR - No .nif.json files found in current folder. Conversion canceled.")
         log_message("\nThe ending of the words is ALMSIVI\n")
         input("Press Enter to continue...")
-        sys.exit(1)
+        return
 
     # Check for files with the required base_name and base_M1_affix
     valid_files = []
@@ -161,7 +162,7 @@ def process_files(config):
         log_message("\nERROR - No valid files found. Conversion canceled.")
         log_message("\nThe ending of the words is ALMSIVI\n")
         input("Press Enter to continue...")
-        sys.exit(1)
+        return
 
     # Processing valid files
     for filename in valid_files:
@@ -214,7 +215,7 @@ def process_files(config):
                     nitrishape_key = child.split()[0]
                     if nitrishape_key in updated_content:
                         updated_content[nitrishape_key]["Name"] = new_name
-                    log_message(f"Renaming NiTriShape -> {old_name} | {new_name}")
+                    log_message(f"Updating Children ---> {old_name} | {new_name}")
 
             # Update the Name field in NiTriShape blocks
             nitrishape_counter = 1
@@ -223,13 +224,13 @@ def process_files(config):
                     if value.get("Name") == base_NTS_name:
                         new_name = f"Tri {base_name}{new_affix}:{nitrishape_counter}"
                         updated_content[key]["Name"] = new_name
-                        log_message(f"Updating NiTriShape Name -> {base_NTS_name} | {new_name}")
+                        log_message(f"Renaming NiTriShape -> {base_NTS_name} | {new_name}")
                         nitrishape_counter += 1
 
             # Replace the base texture
             new_texture = new_base_M1_texture[i % len(new_base_M1_texture)]
-            normalized_base_texture = base_M1_texture.replace("\\\\", "\\")
-            normalized_new_texture = new_texture.replace("\\\\", "\\")
+            normalized_base_texture = os.path.normpath(base_M1_texture)
+            normalized_new_texture = os.path.normpath(new_texture)
 
             for key, value in updated_content.items():
                 if "NiSourceTexture" in key and isinstance(value, dict):
@@ -247,7 +248,7 @@ def main():
     with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
         log.write("")
 
-    print("\nTES3 Automatic Retexturing Script\nBloodmoon Grass | Single Material\n\nby Siberian Crab\nv1.0.2\n")
+    print("\nTES3 Automatic Retexturing Script\nBloodmoon Grass | Single Material\n\nby Siberian Crab\nv1.0.3\n")
     
     try:
         process_files(CONFIG)
