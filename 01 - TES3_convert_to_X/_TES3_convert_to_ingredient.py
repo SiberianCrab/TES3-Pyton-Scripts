@@ -115,7 +115,7 @@ def process_files(config, ignored_files):
     if not files:
         print("\nERROR - no .nif files found in current folder. Conversion canceled.")
         input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
-        sys.exit(1)
+        return
 
     entries = []
     errors = {"id": [], "mesh": []}
@@ -156,7 +156,7 @@ def main():
 
     if not validate_settings(CONFIG):
         input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
-        sys.exit(1)
+        return
 
     process_files(CONFIG, ignored_files)
     
