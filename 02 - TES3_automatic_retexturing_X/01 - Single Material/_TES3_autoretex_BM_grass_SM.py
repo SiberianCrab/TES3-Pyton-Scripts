@@ -15,7 +15,7 @@ import json
 # Configuration settings
 CONFIG = {
     "directory": ".",
-    "base_name": "Grass01_BM",                             # Base .NIF file name
+    "base_name": "Grass01_BM",                            # Base .NIF file name
     "base_NTS_name": "Grass",                             # Base NiTriShape name of the first material
     "base_M1_affix": "_G2",                               # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_grass_02.dds",  # Base texture of the first material
