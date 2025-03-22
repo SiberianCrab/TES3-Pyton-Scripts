@@ -15,57 +15,36 @@ import json
 # Configuration settings
 CONFIG = {
     "directory": ".",
-    "base_name": "Hill01_BM",                             # Base .NIF file name
-    "base_NTS_name": "Hill",                              # Base NiTriShape name of the first material
-    "base_M1_affix": "_G2",                               # Base .NIF file affix of the first material
-    "base_M1_texture": "textures\\\\tx_bm_grass_02.dds",  # Base texture of the first material
+    "base_name": "Snow01_BM",                            # Base .NIF file name
+    "base_NTS_name": "Snow",                             # Base NiTriShape name of the first material
+    "base_M1_affix": "_S2",                              # Base .NIF file affix of the first material
+    "base_M1_texture": "textures\\\\tx_bm_Snow_02.dds",  # Base texture of the first material
     
-    "log_file": "_TES3_autoretex_BM_hills_SM_log.txt"
+    "log_file": "_TES3_autoretex_BM_snow_SM_log.txt"
 }
 
 # List of suffixes/affixes for .NIF name generation
-suffixes = ["", "_m", "a", "a_m", "b", "b_m"]             # Base .NIF file suffix variations
+suffixes = ["", "_m", "a", "a_m", "b", "b_m"]            # Base .NIF file suffix variations
 
-new_M1_affixes = [                                        # New .NIF file affix variations
-    "_D1",                                                # for dirt
-    "_DS1",                                               # for dirt_snow
-    "_G1", "_G2", "_G3",                                  # for grass
-    "_GD1",                                               # for grass_dirt
-    "_GS1", "_GS2", "_GS3",                               # for grass_snow
-    "_GSa2",                                              # for grass_snow_a
-    "_PN1",                                               # for needles
-    "_I1", "_I2", "_I3", "_I4", "_I5", "_I6",             # for ice
-    "_S1", "_S2", "_S3", "_S4", "_S5",                    # for snow
-    "_SI1"                                                # for snow_ice
+new_M1_affixes = [                                       # New .NIF file affix variations
+    "_S1", "_S2", "_S3", "_S4", "_S5",                   # for snow
+    "_SI1",                                              # for snow_ice
+    "_SR1"                                               # for snow_rock
 ]
 
 # List of new textures for the first material
 # The number of textures must be equal to the number of 'new_M1_affixes'
 # Textures must be listed in the same order as 'new_M1_affixes'
 def generate_textures():
-    dirt_textures = ["textures\\\\tx_bm_dirt_01.dds"]
-    dirt_snow_textures = ["textures\\\\tx_bm_dirt_snow_01.dds"]
-    grass_textures = [f"textures\\\\tx_bm_grass_{i:02d}.dds" for i in range(1, 4)]
-    grass_dirt_textures = ["textures\\\\tx_bm_grass_dirt_01.dds"]
-    grass_snow_textures = [f"textures\\\\tx_bm_grass_snow_{i:02d}.dds" for i in range(1, 4)]
-    grass_snow_a_textures = ["textures\\\\tx_bm_grass_snow_02a.dds"]
-    needles_textures = ["textures\\\\tx_bm_pine_needles_01.dds"]
-    ice_textures = [f"textures\\\\tx_bm_ice_{i:02d}.dds" for i in range(1, 7)]
     snow_textures = [f"textures\\\\tx_bm_snow_{i:02d}.dds" for i in range(1, 6)]
     snow_ice_textures = ["textures\\\\tx_bm_snow_ice_01.dds"]
+    snow_rock_textures = ["textures\\\\tx_bm_snow_rock_01.dds"]
 
     # Combining textures into one list
     return (
-        dirt_textures +
-        dirt_snow_textures +
-        grass_textures +
-        grass_dirt_textures +
-        grass_snow_textures +
-        grass_snow_a_textures +
-        needles_textures +
-        ice_textures +
         snow_textures +
-        snow_ice_textures
+        snow_ice_textures +
+        snow_rock_textures
     )
 
 # Function to log messages to log file and console
@@ -257,7 +236,7 @@ def main():
     with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
         log.write("")
 
-    print("\nTES3 Automatic Retexturing Script\nBloodmoon Hills | Single Material\n\nby Siberian Crab\nv1.0.3\n")
+    print("\nTES3 Automatic Retexturing Script\nBloodmoon Snow | Single Material\n\nby Siberian Crab\nv1.0.3\n")
     
     try:
         process_files(CONFIG)

@@ -15,12 +15,12 @@ import json
 # Configuration settings
 CONFIG = {
     "directory": ".",
-    "base_name": "Rock01_BM",                            # Base .NIF file name
-    "base_NTS_name": "Rock",                             # Base NiTriShape name of the first material
-    "base_M1_affix": "_R2",                              # Base .NIF file affix of the first material
-    "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",  # Base texture of the first material
+    "base_name": "Ice01_BM",                             # Base .NIF file name
+    "base_NTS_name": "Ice",                              # Base NiTriShape name of the first material
+    "base_M1_affix": "_I2",                              # Base .NIF file affix of the first material
+    "base_M1_texture": "textures\\\\tx_bm_Ice_02.dds",   # Base texture of the first material
     
-    "log_file": "_TES3_autoretex_BM_rocks_SM_log.txt"
+    "log_file": "_TES3_autoretex_BM_ice_SM_log.txt"
 }
 
 # List of suffixes/affixes for .NIF name generation
@@ -28,12 +28,6 @@ suffixes = ["", "_m", "a", "a_m", "b", "b_m"]            # Base .NIF file suffix
 
 new_M1_affixes = [                                       # New .NIF file affix variations
     "_I1", "_I2", "_I3", "_I4", "_I5", "_I6",            # for ice
-    "_R1", "_R2", "_R3",                                 # for rock
-    "_RS1", "_RS2", "_RS3",                              # for rock_snow
-    "_RSa1", "_RSa2",                                    # for rock_snow_a
-    "_S1", "_S2", "_S3", "_S4", "_S5",                   # for snow
-    "_SI1",                                              # for snow_ice
-    "_SR1"                                               # for snow_rock
 ]
 
 # List of new textures for the first material
@@ -41,22 +35,10 @@ new_M1_affixes = [                                       # New .NIF file affix v
 # Textures must be listed in the same order as 'new_M1_affixes'
 def generate_textures():
     ice_textures = [f"textures\\\\tx_bm_ice_{i:02d}.dds" for i in range(1, 7)]
-    rock_textures = [f"textures\\\\tx_bm_rock_{i:02d}.dds" for i in range(1, 4)]
-    rock_snow_textures = [f"textures\\\\tx_bm_rock_snow_{i:02d}.dds" for i in range(1, 4)]
-    rock_snow_a_textures = [f"textures\\\\tx_bm_rock_snow_{i:02d}a.dds" for i in range(1, 3)]
-    snow_textures = [f"textures\\\\tx_bm_snow_{i:02d}.dds" for i in range(1, 6)]
-    snow_ice_textures = ["textures\\\\tx_bm_snow_ice_01.dds"]
-    snow_rock_textures = ["textures\\\\tx_bm_snow_rock_01.dds"]
 
     # Combining textures into one list
     return (
-        ice_textures +
-        rock_textures +
-        rock_snow_textures +
-        rock_snow_a_textures +
-        snow_textures +
-        snow_ice_textures +
-        snow_rock_textures
+        ice_textures
     )
 
 # Function to log messages to log file and console
@@ -248,7 +230,7 @@ def main():
     with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
         log.write("")
 
-    print("\nTES3 Automatic Retexturing Script\nBloodmoon Rocks | Single Material\n\nby Siberian Crab\nv1.0.3\n")
+    print("\nTES3 Automatic Retexturing Script\nBloodmoon Ice  |  Single Material\n\nby Siberian Crab\nv1.0.3\n")
     
     try:
         process_files(CONFIG)
