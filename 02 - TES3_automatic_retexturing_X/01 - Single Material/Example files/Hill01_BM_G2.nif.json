@@ -18,13 +18,13 @@
 		"Properties": [],
 		"Has Bounding Volume": "no",
 		"Children": [
-			"1 NiTriShape \"Grass\"",
+			"1 NiTriShape \"Hill\"",
 			"6 RootCollisionNode"
 		],
 		"Effects": []
 	},
 	"1 NiTriShape": {
-		"Name": "Grass",
+		"Name": "Hill",
 		"Extra Data": "None",
 		"Controller": "None",
 		"Flags": "0",
