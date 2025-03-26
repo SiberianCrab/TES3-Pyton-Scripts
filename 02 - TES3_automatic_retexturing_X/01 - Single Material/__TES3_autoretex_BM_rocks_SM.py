@@ -16,7 +16,7 @@ import json
 CONFIG = {
     "directory": ".",
     "base_name": "Rock{num_part}_BM",                    # Base .NIF file name
-    "base_numbers": range(1, 999),                       # Base .NIF file name numeration
+    "base_numbers": range(1, 9999),                      # Base .NIF file name numeration
     "base_NTS_name": "Rock",                             # Base NiTriShape name of the first material
     "base_M1_affix": "_R2",                              # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_rock_02.dds",  # Base texture of the first material
@@ -140,7 +140,7 @@ def process_files(config):
     base_names = set()
     for filename in all_files:
         for number in base_numbers:
-            num_part = f"{number:02d}" if number < 100 else f"{number:03d}"
+            num_part = f"{number:02d}" if number < 100 else (f"{number:03d}" if number < 1000 else f"{number:04d}")
             base_name = base_name_template.format(num_part=num_part)
             if filename.startswith(base_name):
                 base_names.add(base_name)
