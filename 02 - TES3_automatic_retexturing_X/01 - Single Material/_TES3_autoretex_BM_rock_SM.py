@@ -49,20 +49,15 @@ def generate_textures():
     )
 
 # Function to log messages to log file and console
-def log_message(message, is_input=False, log_to_file=True):
+def log_message(message, log_to_file=True):
     log_file = CONFIG.get("log_file", "")
-
     if log_to_file and log_file:
         try:
             with open(log_file, "a", encoding="utf-8") as log:
                 log.write(message + "\n")
         except OSError as e:
             print(f"ERROR - Failed to write to log file: {e}")
-
-    if not is_input:
-        print(message)
-    else:
-        return input(message)
+    print(message)
 
 # Generate a mapping of existing affixes to new affixes
 def generate_affix_mapping(suffixes, new_M1_affixes, base_M1_affix):
