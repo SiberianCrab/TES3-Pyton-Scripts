@@ -4,9 +4,9 @@ import json
 # Configuration settings
 CONFIG = {
     "directory": ".",
-    "mirror_suffix": "_m",                  # Suffix for mirrored files
+    "mirror_suffix": "_m",                     # Suffix for mirrored files
     
-    "log_file": "_TES3_automirror_NIF.log"   # Log file name
+    "log_file": "_TES3_automirror_NIF_X.log"   # Log file name
 }
 
 # Function to log messages to log file and console
