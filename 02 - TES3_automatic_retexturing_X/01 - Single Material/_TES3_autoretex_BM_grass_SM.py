@@ -119,17 +119,18 @@ def process_files(config):
     base_numbers = config["base_numbers"]
     base_NTS_name = config["base_NTS_name"] 
     base_M1_texture = config["base_M1_texture"]
+    processed_base_files = 0
+    files_created = 0
+    files_skipped = 0
 
     new_base_M1_texture = generate_textures()
     M1_affix_mapping = generate_affix_mapping(suffixes, new_M1_affixes, CONFIG["base_M1_affix"])
-
+    
     # Global check for any .nif.json files in the directory
     all_files = get_json_files(directory)
     if not all_files:
         log_message("No .nif.json files found in current folder. Conversion canceled.")
-        log_message("\nThe ending of the words is ALMSIVI\n")
-        input("Press Enter to continue...")
-        return
+        return 0, 0, 0
 
     # Creating a set of unique base names (without affixes/suffixes)
     base_names = set()
@@ -144,9 +145,6 @@ def process_files(config):
     # Sorting base names for sequential processing
     sorted_base_names = sorted(base_names)
     total_base_files = len(sorted_base_names)
-    processed_base_files = 0
-    files_created = 0
-    files_skipped = 0
 
     log_message(f"Found {total_base_files} base files to process")
 
@@ -278,15 +276,14 @@ def main():
 
     print("\nTES3 Automatic Retexturing Script\nBloodmoon Grass | Single Material\n\nby Siberian Crab\nv1.0.4\n")
     
-    try:
-        processed_base_files, files_created, files_skipped = process_files(CONFIG)
-    except Exception as e:
-        log_message(f"ERROR - Unexpected error: {e}")
-        processed_base_files, files_created, files_skipped = 0, 0, 0
+    processed_base_files, files_created, files_skipped = process_files(CONFIG)
     
-    log_message(f"\nProcessing complete!")
-    log_message(f"  - total files skipped: {files_skipped}")
-    log_message(f"  - total files created: {files_created}")
+    # Only show completion message if files were processed
+    if processed_base_files > 0:
+        log_message(f"\nProcessing complete!")
+        log_message(f"  - total files skipped: {files_skipped}")
+        log_message(f"  - total files created: {files_created}")
+    
     log_message("\nThe ending of the words is ALMSIVI\n")
     input("Press Enter to continue...")
 
