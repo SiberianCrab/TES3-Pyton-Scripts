@@ -89,8 +89,6 @@ def process_files(config, ignored_files):
     files = get_nif_files(ignored_files)
     if not files:
         print("\nNo .nif files found in current folder. Conversion canceled.")
-        print("\nThe ending of the words is ALMSIVI\n")
-        input("Press Enter to continue...")
         return
 
     entries = []

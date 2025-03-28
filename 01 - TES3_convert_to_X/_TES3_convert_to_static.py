@@ -71,8 +71,7 @@ def write_file(filepath, content, is_json=False):
 def process_files(config, ignored_files):
     files = get_nif_files(ignored_files)
     if not files:
-        print("\nThe ending of the words is ALMSIVI\n")
-        input("Press Enter to continue...")
+        print("\nNo .nif files found in current folder. Conversion canceled.")
         return
 
     entries = []
