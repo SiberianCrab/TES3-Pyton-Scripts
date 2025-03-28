@@ -135,12 +135,12 @@ def main():
         output_path = os.path.join(CONFIG["directory"], output_filename)
         
         if process_single_file(input_path, output_path):
-            log_message(f"{filename.ljust(column_width, '.')} -> {output_filename}")
+            log_message(f"{filename.ljust(column_width)} -> {output_filename}")
             success_count += 1
         else:
             log_message(f"[FAIL] {filename.ljust(column_width)} -> Failed")
 
-    log_message(f"Processing complete. Success: {success_count}/{len(files_to_process)}")
+    log_message(f"\nProcessing complete. Success: {success_count}/{len(files_to_process)}")
     log_message("\nThe ending of the words is ALMSIVI\n")
     input("Press Enter to continue...")
 
