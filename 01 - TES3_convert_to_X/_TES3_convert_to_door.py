@@ -26,8 +26,8 @@ CONFIG = {
     "max_length_name": 31,
     "max_length_mesh": 31,
 
-    "output_file": "_TES3_convert_to_door.txt",
-    "log_file": "_TES3_convert_to_door_log.txt"
+    "output_file": "_TES3_convert_to_door_out.txt",
+    "log_file": "_TES3_convert_to_door.log"
 }
 
 # Function to return a list of NIF files from the current folder

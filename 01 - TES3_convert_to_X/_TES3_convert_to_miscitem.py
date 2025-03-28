@@ -28,8 +28,8 @@ CONFIG = {
     "max_length_mesh": 31,
     "max_length_icon": 31,
 
-    "output_file": "_TES3_convert_to_miscitem.txt",
-    "log_file": "_TES3_convert_to_miscitem_log.txt"
+    "output_file": "_TES3_convert_to_miscitem_out.txt",
+    "log_file": "_TES3_convert_to_miscitem.log"
 }
 
 # Function to return a list of NIF files from the current folder
