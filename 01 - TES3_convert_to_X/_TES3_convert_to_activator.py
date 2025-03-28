@@ -83,8 +83,9 @@ def write_file(filepath, content, is_json=False):
 def process_files(config, ignored_files):
     files = get_nif_files(ignored_files)
     if not files:
-        print("\nERROR - no .nif files found in current folder. Conversion canceled.")
-        input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
+        print("\nNo .nif files found in current folder. Conversion canceled.")
+        print("\nThe ending of the words is ALMSIVI\n")
+        input("Press Enter to continue...")
         return
 
     entries = []
@@ -125,12 +126,14 @@ def main():
     ignored_files = {os.path.basename(sys.argv[0]), CONFIG["output_file"], CONFIG["log_file"]}
 
     if not validate_settings(CONFIG):
-        input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
+        print("\nThe ending of the words is ALMSIVI\n")
+        input("Press Enter to continue...")
         return
 
     process_files(CONFIG, ignored_files)
     
-    input("\nThe ending of the words is ALMSIVI\n\nPress Enter to continue...")
+    print("\nThe ending of the words is ALMSIVI\n")
+    input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main()

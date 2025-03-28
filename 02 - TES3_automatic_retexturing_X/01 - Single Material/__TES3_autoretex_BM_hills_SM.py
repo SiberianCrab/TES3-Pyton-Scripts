@@ -21,7 +21,7 @@ CONFIG = {
     "base_M1_affix": "_G2",                               # Base .NIF file affix of the first material
     "base_M1_texture": "textures\\\\tx_bm_grass_02.dds",  # Base texture of the first material
     
-    "log_file": "__TES3_autoretex_BM_hills_SM_log.txt"
+    "log_file": "__TES3_autoretex_BM_hills_SM.log"
 }
 
 # List of suffixes/affixes for .NIF name generation
@@ -71,14 +71,14 @@ def generate_textures():
 
 # Function to log messages to log file and console
 def log_message(message, log_to_file=True):
-    log_file = CONFIG.get("log_file", "")
-    if log_to_file and log_file:
+    print(message)
+
+    if log_to_file and CONFIG["log_file"]:
         try:
-            with open(log_file, "a", encoding="utf-8") as log:
+            with open(CONFIG["log_file"], "a", encoding="utf-8") as log:
                 log.write(message + "\n")
         except OSError as e:
             print(f"ERROR - Failed to write to log file: {e}")
-    print(message)
 
 # Generate a mapping of existing affixes to new affixes
 def generate_affix_mapping(suffixes, new_M1_affixes, base_M1_affix):
@@ -135,7 +135,7 @@ def process_files(config):
     # Global check for any .nif.json files in the directory
     all_files = get_json_files(directory)
     if not all_files:
-        log_message("ERROR - No .nif.json files found in current folder. Conversion canceled.")
+        log_message("No .nif.json files found in current folder. Conversion canceled.")
         log_message("\nThe ending of the words is ALMSIVI\n")
         input("Press Enter to continue...")
         return
@@ -278,8 +278,12 @@ def process_files(config):
     return processed_base_files, files_created, files_skipped
 
 def main():
-    with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
-        log.write("")
+    try:
+        with open(CONFIG["log_file"], "w", encoding="utf-8") as log:
+            log.write("")
+    except OSError as e:
+        print(f"Failed to initialize log file: {e}")
+        return
 
     print("\nTES3 Automatic Retexturing Script\nBloodmoon Hills | Single Material\n\nby Siberian Crab\nv1.0.4\n")
     
